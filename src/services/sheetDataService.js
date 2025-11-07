@@ -3,6 +3,7 @@ import {
     parseServiceAccountCredentials,
     createSheetConfig
 } from '../sheetServices';
+import {makePairs} from "./shuffleService.js";
 
 /**
  * Sheet 데이터 처리를 담당하는 서비스 클래스
@@ -284,9 +285,20 @@ export class SheetDataService {
         this.isInitialized = false;
     }
 
-  makeRandomPairs(data) {
-
-  }
+    /**
+     * normals, newbies, leaders의 모든 멤버를 섞어서 giver-receiver 쌍을 생성
+     * 각자 정확히 1명의 giver와 1명의 receiver를 갖도록 함
+     * @param {Object} data - 구조화된 데이터 (normals, newbies, leaders 포함)
+     * @returns {Array<Object>} giver-receiver 쌍 배열
+     */
+    makeRandomPairs(data) {
+        if (!data || !data.normals || !data.newbies || !data.leaders) {
+            throw new Error('유효한 데이터가 없습니다. normals, newbies, leaders 데이터가 필요합니다.');
+        }
+        const pairsData = makePairs(data.normals, data.newbies, data.leaders);
+        console.log(`✅ ${pairsData.pairs.length}개의 쌍이 생성되었습니다.`);
+        return pairsData
+    }
 }
 
 /**

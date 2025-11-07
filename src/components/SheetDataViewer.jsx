@@ -12,6 +12,8 @@ function SheetDataViewer() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [generatedPairs, setGeneratedPairs] = useState(null);
+  const [pairingInProgress, setPairingInProgress] = useState(false);
 
   // 초기 데이터 로드
   useEffect(() => {
@@ -58,6 +60,29 @@ function SheetDataViewer() {
       setError(`새로고침 실패: ${err.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 랜덤 페어 생성 함수
+  const generateRandomPairs = async () => {
+    if (!data || (!data.normals.length && !data.newbies.length && !data.leaders.length)) {
+      setError('참가자 데이터가 없습니다. 먼저 데이터를 로드해주세요.');
+      return;
+    }
+
+    try {
+      setPairingInProgress(true);
+      setError(null);
+
+      const pairResult = dataService.makeRandomPairs(data);
+      setGeneratedPairs(pairResult);
+
+      console.log('쌍 생성 완료:', pairResult);
+    } catch (err) {
+      setError(`쌍 생성 실패: ${err.message}`);
+      console.error('쌍 생성 실패:', err);
+    } finally {
+      setPairingInProgress(false);
     }
   };
 
@@ -133,6 +158,26 @@ function SheetDataViewer() {
             )}
           </div>
         )}
+      </div>
+
+      {/* 랜덤 쌍 생성 버튼 */}
+      <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+        <button
+          onClick={generateRandomPairs}
+          disabled={loading || pairingInProgress || (!data.normals.length && !data.newbies.length && !data.leaders.length)}
+          style={{
+            padding: '12px 24px',
+            fontSize: '16px',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: loading || pairingInProgress ? 'not-allowed' : 'pointer',
+            opacity: loading || pairingInProgress ? 0.6 : 1
+          }}
+        >
+          {pairingInProgress ? '쌍 생성 중...' : '🎲 랜덤 쌍 생성'}
+        </button>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '20px' }}>
@@ -215,6 +260,111 @@ function SheetDataViewer() {
           )}
         </div>
       </div>
+
+      {/* 생성된 랜덤 쌍 표시 */}
+      {generatedPairs && (
+        <div style={{ marginTop: '30px', border: '2px solid #4CAF50', padding: '20px', borderRadius: '10px' }}>
+          <h2 style={{ color: '#4CAF50', marginTop: 0, textAlign: 'center' }}>
+            🎯 생성된 랜덤 쌍 ({generatedPairs.pairs.length}개)
+          </h2>
+
+          {/* 쌍 생성 정보 */}
+          <div style={{
+            backgroundColor: '#e8f5e8',
+            padding: '15px',
+            borderRadius: '5px',
+            marginBottom: '20px',
+            fontSize: '14px'
+          }}>
+            <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+              <span><strong>총 참가자:</strong> {generatedPairs.metadata.totalParticipants}명</span>
+              <span><strong>페어 참여:</strong> {generatedPairs.metadata.usedParticipants}명</span>
+              {generatedPairs.metadata.excludedParticipants > 0 && (
+                <span style={{ color: '#ff9800' }}>
+                  <strong>제외:</strong> {generatedPairs.metadata.excludedParticipants}명
+                </span>
+              )}
+              <span><strong>생성 시간:</strong> {new Date(generatedPairs.metadata.generatedAt).toLocaleString()}</span>
+            </div>
+
+            {generatedPairs.metadata.excluded.length > 0 && (
+              <div style={{ marginTop: '10px', color: '#ff9800' }}>
+                <strong>제외된 참가자:</strong> {generatedPairs.metadata.excluded.map(p => `${p.name} (${p.type})`).join(', ')}
+              </div>
+            )}
+          </div>
+
+          {/* 쌍 목록 */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '15px' }}>
+            {generatedPairs.pairs.map((pair, index) => (
+              <div
+                key={pair.id}
+                style={{
+                  backgroundColor: '#f9f9f9',
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  padding: '15px',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}
+              >
+                <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '8px', color: '#333' }}>
+                  쌍 #{pair.id}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ flex: 1, textAlign: 'center' }}>
+                    <div style={{
+                      backgroundColor: '#2196F3',
+                      color: 'white',
+                      padding: '8px 12px',
+                      borderRadius: '20px',
+                      fontSize: '14px',
+                      marginBottom: '5px'
+                    }}>
+                      GIVER
+                    </div>
+                    <div style={{ fontWeight: 'bold' }}>{pair.giver}</div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>({pair.giverType})</div>
+                  </div>
+                  <div style={{ fontSize: '24px', color: '#4CAF50' }}>➡️</div>
+                  <div style={{ flex: 1, textAlign: 'center' }}>
+                    <div style={{
+                      backgroundColor: '#FF9800',
+                      color: 'white',
+                      padding: '8px 12px',
+                      borderRadius: '20px',
+                      fontSize: '14px',
+                      marginBottom: '5px'
+                    }}>
+                      RECEIVER
+                    </div>
+                    <div style={{ fontWeight: 'bold' }}>{pair.receiver}</div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>({pair.receiverType})</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* 새로운 쌍 생성 버튼 */}
+          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+            <button
+              onClick={generateRandomPairs}
+              disabled={pairingInProgress}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#ff9800',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: pairingInProgress ? 'not-allowed' : 'pointer',
+                opacity: pairingInProgress ? 0.6 : 1
+              }}
+            >
+              🔄 새로운 쌍 다시 생성
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 원시 데이터 표시 (디버깅용) */}
       <details style={{ marginTop: '20px' }}>
