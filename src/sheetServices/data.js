@@ -347,6 +347,51 @@ export class GoogleSheetsData {
     }
 
     /**
+     * 여러 셀을 한 번에 업데이트 (배치 업데이트)
+     * @param {string} spreadsheetId - 스프레드시트 ID
+     * @param {Array<Object>} updates - 업데이트할 데이터 배열
+     * @param {string} updates[].range - 범위 (예: 'Sheet1!A1:B2')
+     * @param {Array<Array<string>>} updates[].values - 업데이트할 값들
+     * @returns {Promise<Object>} 배치 업데이트 결과
+     */
+    async batchUpdateData(spreadsheetId = this.config.spreadsheetId, updates) {
+        try {
+            console.log(`📝 배치 업데이트 시작: ${updates.length}개 범위`);
+
+            const requestBody = {
+                valueInputOption: 'USER_ENTERED',
+                data: updates.map(update => ({
+                    range: update.range,
+                    majorDimension: "ROWS",
+                    values: update.values
+                })),
+                includeValuesInResponse: true,
+                responseValueRenderOption: DEFAULT_REQUEST_OPTIONS.valueRenderOption,
+                responseDateTimeRenderOption: DEFAULT_REQUEST_OPTIONS.dateTimeRenderOption
+            };
+
+            const url = `${this.config.api.baseUrl}/${spreadsheetId}/values:batchUpdate`;
+
+            const data = await this.makeApiRequest(url, {
+                method: 'POST',
+                body: JSON.stringify(requestBody)
+            });
+
+            console.log(`✅ 배치 업데이트 완료: ${data.totalUpdatedCells}개 셀 업데이트`);
+            return {
+                success: true,
+                totalUpdatedCells: data.totalUpdatedCells,
+                totalUpdatedRows: data.totalUpdatedRows,
+                totalUpdatedColumns: data.totalUpdatedColumns,
+                responses: data.responses
+            };
+        } catch (error) {
+            console.error('❌ 배치 업데이트 실패:', error.message);
+            throw new Error(`배치 업데이트 실패: ${error.message}`);
+        }
+    }
+
+    /**
      * 설정 업데이트
      * @param {Object} newConfig - 새로운 설정
      */

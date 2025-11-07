@@ -126,6 +126,18 @@ export function createGoogleSheetsService(config, credentials) {
         },
 
         /**
+         * 여러 셀을 한 번에 업데이트 (배치 업데이트)
+         * @param {Array<Object>} updates - 업데이트할 데이터 배열
+         * @param {string} updates[].range - 범위 (예: 'Sheet1!A1:B2')
+         * @param {Array<Array<string>>} updates[].values - 업데이트할 값들
+         * @param {string} spreadsheetId - 스프레드시트 ID (선택사항)
+         * @returns {Promise<Object>} 배치 업데이트 결과
+         */
+        async batchUpdateData(updates, spreadsheetId) {
+            return await dataService.batchUpdateData(spreadsheetId, updates);
+        },
+
+        /**
          * 스프레드시트 메타데이터 조회
          * @param {string} spreadsheetId - 스프레드시트 ID (선택사항)
          * @returns {Promise<Object>} 스프레드시트 메타데이터
