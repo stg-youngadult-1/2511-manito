@@ -114,7 +114,7 @@ function MyManito() {
     // 로딩 상태
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 flex
+            <div className="min-h-screen bg-gradient-to-br from-red-100 to-pink-50 flex
      items-center justify-center p-4">
                 <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full
      text-center">
@@ -137,8 +137,8 @@ function MyManito() {
     // 에러 상태
     if (error) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 flex
-     items-center justify-center p-4">
+            <div className="min-h-screen bg-gradient-to-br from-red-100 to-pink-50 flex
+     items-center justify-center p-4 ">
                 <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full
      text-center">
                     <div className="text-6xl mb-6">⚠️</div>
@@ -159,7 +159,7 @@ function MyManito() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 p-4">
+        <div className="min-h-screen bg-gradient-to-br from-red-100 to-pink-50 p-4">
             <div className="max-w-md mx-auto pt-12">
                 {!showResult ? (
                     // 검색 화면
@@ -217,7 +217,7 @@ function MyManito() {
      transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 ${
                                 searching || !searchName.trim()
                                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white'
+                                    : 'bg-gradient-to-r from-red-1000 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white'
                             }`}
                         >
                             {searching ? (
@@ -254,7 +254,7 @@ function MyManito() {
      leading-relaxed">
                                 나의 Receiver는<br/>
                                 <span className="text-4xl font-black text-transparent
-     bg-clip-text bg-gradient-to-r from-red-500 to-pink-500">
+     bg-clip-text bg-gradient-to-r from-red-1000 to-pink-500">
                                          {foundReceiver}
                                      </span>
                                 <br/>입니다!
@@ -262,7 +262,7 @@ function MyManito() {
                         </div>
 
                         {/* 축하 메시지 */}
-                        <div className="bg-gradient-to-r from-red-50 to-pink-50 border
+                        <div className="bg-gradient-to-r from-red-100 to-pink-50 border
      border-red-200 rounded-xl p-6 mb-8">
                             <div className="text-4xl mb-3">🎁</div>
                             <p className="text-gray-700 font-medium leading-relaxed">
