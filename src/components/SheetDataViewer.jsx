@@ -15,6 +15,7 @@ function SheetDataViewer() {
     const [generatedPairs, setGeneratedPairs] = useState(null);
     const [pairingInProgress, setPairingInProgress] = useState(false);
     const [savingPairs, setSavingPairs] = useState(false);
+    const [pairingError, setPairingError] = useState(null);
 
     // 초기 데이터 로드
     useEffect(() => {
@@ -67,20 +68,23 @@ function SheetDataViewer() {
     // 랜덤 페어 생성 함수
     const generateRandomPairs = async () => {
         if (!data || (!data.normals.length && !data.newbies.length && !data.leaders.length)) {
-            setError('참가자 데이터가 없습니다. 먼저 데이터를 로드해주세요.');
+            setPairingError('참가자 데이터가 없습니다. 먼저 데이터를 로드해주세요.');
             return;
         }
 
         try {
             setPairingInProgress(true);
-            setError(null);
+            setPairingError(null);
+            setGeneratedPairs(null); // 이전 결과 초기화
 
             const pairResult = dataService.makeRandomPairs(data);
             setGeneratedPairs(pairResult);
+            setPairingError(null); // 성공 시 에러 클리어
 
             console.log('쌍 생성 완료:', pairResult);
         } catch (err) {
-            setError(`쌍 생성 실패: ${err.message}`);
+            setPairingError(err.message);
+            setGeneratedPairs(null); // 에러 시 이전 결과 클리어
             console.error('쌍 생성 실패:', err);
         } finally {
             setPairingInProgress(false);
@@ -137,15 +141,6 @@ function SheetDataViewer() {
         );
     }
 
-    if (error) {
-        return (
-            <div style={{padding: '20px', color: 'red'}}>
-                <h2>데이터 로딩 오류</h2>
-                <p>{error}</p>
-                <button onClick={refetch}>재시도</button>
-            </div>
-        );
-    }
 
     // 통계 정보 계산
     const statistics = data.metadata ? dataService.getDataStatistics(data) : null;
@@ -318,6 +313,116 @@ function SheetDataViewer() {
                     {pairingInProgress ? '쌍 생성 중...' : '🎲 랜덤 쌍 생성'}
                 </button>
             </div>
+
+            {/* 쌍 생성 에러 표시 */}
+            {pairingError && (
+                <div style={{
+                    marginTop: '20px',
+                    marginBottom: '20px',
+                    border: '2px solid #f44336',
+                    borderRadius: '10px',
+                    padding: '20px',
+                    backgroundColor: '#ffebee',
+                    textAlign: 'center'
+                }}>
+                    <h3 style={{color: '#f44336', marginTop: 0, marginBottom: '15px'}}>
+                        ⚠️ 쌍 생성 실패
+                    </h3>
+                    <div style={{
+                        backgroundColor: '#ffcdd2',
+                        padding: '15px',
+                        borderRadius: '5px',
+                        marginBottom: '20px',
+                        fontSize: '14px',
+                        color: '#d32f2f',
+                        lineHeight: '1.6'
+                    }}>
+                        <strong>에러 메시지:</strong><br />
+                        {pairingError}
+                    </div>
+
+                    {/* 에러별 해결 방법 제시 */}
+                    <div style={{
+                        backgroundColor: '#fff3e0',
+                        border: '1px solid #ff9800',
+                        padding: '15px',
+                        borderRadius: '5px',
+                        marginBottom: '20px',
+                        fontSize: '14px',
+                        color: '#ef6c00',
+                        textAlign: 'left'
+                    }}>
+                        <strong>💡 해결 방법:</strong>
+                        <ul style={{marginTop: '10px', marginBottom: 0, paddingLeft: '20px'}}>
+                            {pairingError.includes('newbie') && (
+                                <li>newbie와 leader의 비율을 조정해보세요</li>
+                            )}
+                            {pairingError.includes('leader') && (
+                                <li>leader끼리는 매칭이 불가능합니다. normal 참가자를 추가해보세요</li>
+                            )}
+                            {pairingError.includes('참가자 구성') && (
+                                <li>참가자 구성을 변경하거나 filterPairs를 조정해보세요</li>
+                            )}
+                            {pairingError.includes('1명뿐') && (
+                                <li>각 그룹에 최소 2명 이상의 참가자가 필요합니다</li>
+                            )}
+                            <li>데이터를 새로고침한 후 다시 시도해보세요</li>
+                            <li>filterPairs에서 너무 많은 쌍을 제외했는지 확인해보세요</li>
+                        </ul>
+                    </div>
+
+                    <div style={{display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap'}}>
+                        <button
+                            onClick={generateRandomPairs}
+                            disabled={pairingInProgress}
+                            style={{
+                                padding: '10px 20px',
+                                backgroundColor: '#4CAF50',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: pairingInProgress ? 'not-allowed' : 'pointer',
+                                opacity: pairingInProgress ? 0.6 : 1,
+                                fontSize: '14px'
+                            }}
+                        >
+                            🔄 다시 생성하기
+                        </button>
+
+                        <button
+                            onClick={refreshData}
+                            disabled={loading || pairingInProgress}
+                            style={{
+                                padding: '10px 20px',
+                                backgroundColor: '#2196F3',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: loading || pairingInProgress ? 'not-allowed' : 'pointer',
+                                opacity: loading || pairingInProgress ? 0.6 : 1,
+                                fontSize: '14px'
+                            }}
+                        >
+                            📊 데이터 새로고침
+                        </button>
+
+                        <button
+                            onClick={() => setPairingError(null)}
+                            style={{
+                                padding: '10px 20px',
+                                backgroundColor: '#757575',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                                fontSize: '14px'
+                            }}
+                        >
+                            ✖️ 에러 메시지 닫기
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* 생성된 랜덤 쌍 표시 */}
             {generatedPairs && (
