@@ -119,24 +119,41 @@ function SheetDataViewer() {
     // 에러 상태 UI
     if (error && !loading) {
         return (
-            <div style={{padding: '20px', color: 'red'}}>
-                <h2>오류</h2>
-                <p>{error}</p>
-                <button onClick={loadData} style={{padding: '10px 20px', marginTop: '10px'}}>
-                    다시 시도
-                </button>
-                <p style={{marginTop: '10px', fontSize: '14px', color: '#666'}}>
-                    환경 변수 VITE_SERVICE_ACCOUNT_CREDENTIALS가 올바르게 설정되었는지 확인해주세요.
-                </p>
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+                    <div className="text-6xl mb-6">⚠️</div>
+                    <h2 className="text-2xl font-bold text-red-600 mb-4">오류 발생</h2>
+                    <p className="text-gray-700 mb-6 leading-relaxed break-words">{error}</p>
+                    <button
+                        onClick={loadData}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl
+                                 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 w-full mb-4"
+                    >
+                        🔄 다시 시도
+                    </button>
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                        <p className="text-amber-800 text-sm">
+                            💡 환경 변수 VITE_SERVICE_ACCOUNT_CREDENTIALS가 올바르게 설정되었는지 확인해주세요.
+                        </p>
+                    </div>
+                </div>
             </div>
         );
     }
 
     if (loading) {
         return (
-            <div style={{padding: '20px'}}>
-                <h2>Google Sheets 데이터 로딩 중...</h2>
-                <p>스프레드시트에서 데이터를 가져오고 있습니다.</p>
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+                    <div className="animate-spin text-6xl mb-6">⏳</div>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-4">데이터 로딩 중...</h2>
+                    <p className="text-gray-600 leading-relaxed">스프레드시트에서 데이터를 가져오고 있습니다.</p>
+                    <div className="mt-6">
+                        <div className="bg-blue-100 rounded-full h-2 overflow-hidden">
+                            <div className="bg-blue-600 h-full rounded-full animate-pulse w-3/4"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -146,490 +163,510 @@ function SheetDataViewer() {
     const statistics = data.metadata ? dataService.getDataStatistics(data) : null;
 
     return (
-        <div style={{padding: '20px', fontFamily: 'Arial, sans-serif'}}>
-            <h1>Google Sheets 데이터 뷰어</h1>
-            <p>스프레드시트 ID: 1IbHBh5SACa505qLB6eNZEARwRofDme_p1NmyRCL7xPA</p>
-
-            <div style={{display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '20px'}}>
-                <button
-                    onClick={refreshData}
-                    disabled={loading}
-                    style={{
-                        padding: '10px 20px',
-                        cursor: loading ? 'not-allowed' : 'pointer',
-                        opacity: loading ? 0.6 : 1
-                    }}
-                >
-                    {loading ? '로딩 중...' : '데이터 새로고침'}
-                </button>
-
-                {statistics && (
-                    <div style={{
-                        backgroundColor: '#f0f0f0',
-                        padding: '10px 15px',
-                        borderRadius: '5px',
-                        fontSize: '14px'
-                    }}>
-                        <strong>통계:</strong> 총 {statistics.totalItems}개 항목, {statistics.totalPairs}개 페어
-                        {data.metadata?.fetchedAt && (
-                            <span style={{marginLeft: '10px', color: '#666'}}>
-                (마지막 업데이트: {new Date(data.metadata.fetchedAt).toLocaleString()})
-              </span>
-                        )}
-                    </div>
-                )}
-            </div>
-
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '20px'}}>
-                {/* Normals 섹션 */}
-                <div style={{border: '1px solid #ddd', padding: '15px', borderRadius: '5px'}}>
-                    <h3 style={{color: '#2196F3', marginTop: 0}}>Normals (A4:A)</h3>
-                    <p>총 {data.normals.length}개 항목</p>
-                    <div style={{
-                        maxHeight: '200px',
-                        overflowY: 'auto',
-                        backgroundColor: '#f5f5f5',
-                        padding: '10px',
-                        borderRadius: '3px'
-                    }}>
-                        {data.normals.length > 0 ? (
-                            <ul style={{margin: 0, paddingLeft: '20px'}}>
-                                {data.normals.map((item, index) => (
-                                    <li key={index} style={{marginBottom: '5px'}}>{item}</li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p style={{color: '#666', fontStyle: 'italic'}}>데이터가 없습니다.</p>
-                        )}
-                    </div>
+        <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
+            <div className="max-w-7xl mx-auto">
+                {/* Header */}
+                <div className="mb-6 sm:mb-8">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                        🎯 마니또 시스템
+                    </h1>
+                    <p className="text-sm sm:text-base text-gray-600 break-all">
+                        스프레드시트 ID: 1IbHBh5SACa505qLB6eNZEARwRofDme_p1NmyRCL7xPA
+                    </p>
                 </div>
 
-                {/* Newbies 섹션 */}
-                <div style={{border: '1px solid #ddd', padding: '15px', borderRadius: '5px'}}>
-                    <h3 style={{color: '#4CAF50', marginTop: 0}}>Newbies (B4:B)</h3>
-                    <p>총 {data.newbies.length}개 항목</p>
-                    <div style={{
-                        maxHeight: '200px',
-                        overflowY: 'auto',
-                        backgroundColor: '#f5f5f5',
-                        padding: '10px',
-                        borderRadius: '3px'
-                    }}>
-                        {data.newbies.length > 0 ? (
-                            <ul style={{margin: 0, paddingLeft: '20px'}}>
-                                {data.newbies.map((item, index) => (
-                                    <li key={index} style={{marginBottom: '5px'}}>{item}</li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p style={{color: '#666', fontStyle: 'italic'}}>데이터가 없습니다.</p>
-                        )}
-                    </div>
-                </div>
-
-                {/* Leaders 섹션 */}
-                <div style={{border: '1px solid #ddd', padding: '15px', borderRadius: '5px'}}>
-                    <h3 style={{color: '#FF9800', marginTop: 0}}>Leaders (C4:C)</h3>
-                    <p>총 {data.leaders.length}개 항목</p>
-                    <div style={{
-                        maxHeight: '200px',
-                        overflowY: 'auto',
-                        backgroundColor: '#f5f5f5',
-                        padding: '10px',
-                        borderRadius: '3px'
-                    }}>
-                        {data.leaders.length > 0 ? (
-                            <ul style={{margin: 0, paddingLeft: '20px'}}>
-                                {data.leaders.map((item, index) => (
-                                    <li key={index} style={{marginBottom: '5px'}}>{item}</li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p style={{color: '#666', fontStyle: 'italic'}}>데이터가 없습니다.</p>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {/* Filter Pairs 섹션 */}
-            <div style={{border: '1px solid #ddd', padding: '15px', borderRadius: '5px'}}>
-                <h3 style={{color: '#9C27B0', marginTop: 0}}>Filter Pairs (G4:H40)</h3>
-                <p>총 {data.filterPairs.length}개 페어</p>
-                <div style={{
-                    maxHeight: '300px',
-                    overflowY: 'auto',
-                    backgroundColor: '#f5f5f5',
-                    padding: '10px',
-                    borderRadius: '3px'
-                }}>
-                    {data.filterPairs.length > 0 ? (
-                        <table style={{width: '100%', borderCollapse: 'collapse'}}>
-                            <thead>
-                            <tr style={{backgroundColor: '#e0e0e0'}}>
-                                <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ccc'}}>Column G</th>
-                                <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ccc'}}>Column H</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {data.filterPairs.map((pair, index) => (
-                                <tr key={index} style={{backgroundColor: index % 2 === 0 ? '#fff' : '#f9f9f9'}}>
-                                    <td style={{padding: '8px', border: '1px solid #ddd'}}>{pair[0]}</td>
-                                    <td style={{padding: '8px', border: '1px solid #ddd'}}>{pair[1]}</td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p style={{color: '#666', fontStyle: 'italic'}}>데이터가 없습니다.</p>
-                    )}
-                </div>
-            </div>
-
-
-            {/* 원시 데이터 표시 (디버깅용) */}
-            <details style={{marginTop: '20px'}}>
-                <summary style={{cursor: 'pointer', fontWeight: 'bold'}}>원시 배치 데이터 보기</summary>
-                <pre style={{backgroundColor: '#f5f5f5', padding: '10px', overflow: 'auto', fontSize: '12px'}}>
-                  {JSON.stringify(data, null, 2)}
-                </pre>
-            </details>
-
-            {/* 랜덤 쌍 생성 버튼 */}
-            <div style={{marginBottom: '20px', textAlign: 'center'}}>
-                <button
-                    onClick={generateRandomPairs}
-                    disabled={loading || pairingInProgress || (!data.normals.length && !data.newbies.length && !data.leaders.length)}
-                    style={{
-                        padding: '12px 24px',
-                        fontSize: '16px',
-                        backgroundColor: '#4CAF50',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: loading || pairingInProgress ? 'not-allowed' : 'pointer',
-                        opacity: loading || pairingInProgress ? 0.6 : 1
-                    }}
-                >
-                    {pairingInProgress ? '쌍 생성 중...' : '🎲 랜덤 쌍 생성'}
-                </button>
-            </div>
-
-            {/* 쌍 생성 에러 표시 */}
-            {pairingError && (
-                <div style={{
-                    marginTop: '20px',
-                    marginBottom: '20px',
-                    border: '2px solid #f44336',
-                    borderRadius: '10px',
-                    padding: '20px',
-                    backgroundColor: '#ffebee',
-                    textAlign: 'center'
-                }}>
-                    <h3 style={{color: '#f44336', marginTop: 0, marginBottom: '15px'}}>
-                        ⚠️ 쌍 생성 실패
-                    </h3>
-                    <div style={{
-                        backgroundColor: '#ffcdd2',
-                        padding: '15px',
-                        borderRadius: '5px',
-                        marginBottom: '20px',
-                        fontSize: '14px',
-                        color: '#d32f2f',
-                        lineHeight: '1.6'
-                    }}>
-                        <strong>에러 메시지:</strong><br />
-                        {pairingError}
-                    </div>
-
-                    {/* 에러별 해결 방법 제시 */}
-                    <div style={{
-                        backgroundColor: '#fff3e0',
-                        border: '1px solid #ff9800',
-                        padding: '15px',
-                        borderRadius: '5px',
-                        marginBottom: '20px',
-                        fontSize: '14px',
-                        color: '#ef6c00',
-                        textAlign: 'left'
-                    }}>
-                        <strong>💡 해결 방법:</strong>
-                        <ul style={{marginTop: '10px', marginBottom: 0, paddingLeft: '20px'}}>
-                            {pairingError.includes('newbie') && (
-                                <li>newbie와 leader의 비율을 조정해보세요</li>
-                            )}
-                            {pairingError.includes('leader') && (
-                                <li>leader끼리는 매칭이 불가능합니다. normal 참가자를 추가해보세요</li>
-                            )}
-                            {pairingError.includes('참가자 구성') && (
-                                <li>참가자 구성을 변경하거나 filterPairs를 조정해보세요</li>
-                            )}
-                            {pairingError.includes('1명뿐') && (
-                                <li>각 그룹에 최소 2명 이상의 참가자가 필요합니다</li>
-                            )}
-                            <li>데이터를 새로고침한 후 다시 시도해보세요</li>
-                            <li>filterPairs에서 너무 많은 쌍을 제외했는지 확인해보세요</li>
-                        </ul>
-                    </div>
-
-                    <div style={{display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap'}}>
-                        <button
-                            onClick={generateRandomPairs}
-                            disabled={pairingInProgress}
-                            style={{
-                                padding: '10px 20px',
-                                backgroundColor: '#4CAF50',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '5px',
-                                cursor: pairingInProgress ? 'not-allowed' : 'pointer',
-                                opacity: pairingInProgress ? 0.6 : 1,
-                                fontSize: '14px'
-                            }}
-                        >
-                            🔄 다시 생성하기
-                        </button>
-
+                {/* Control Panel */}
+                <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6">
+                    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                         <button
                             onClick={refreshData}
-                            disabled={loading || pairingInProgress}
-                            style={{
-                                padding: '10px 20px',
-                                backgroundColor: '#2196F3',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '5px',
-                                cursor: loading || pairingInProgress ? 'not-allowed' : 'pointer',
-                                opacity: loading || pairingInProgress ? 0.6 : 1,
-                                fontSize: '14px'
-                            }}
+                            disabled={loading}
+                            className={`
+                                flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium
+                                transition-all duration-200 w-full sm:w-auto
+                                ${loading
+                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                    : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg'
+                                }
+                            `}
                         >
-                            📊 데이터 새로고침
+                            <span className="text-lg">🔄</span>
+                            {loading ? '로딩 중...' : '데이터 새로고침'}
                         </button>
 
-                        <button
-                            onClick={() => setPairingError(null)}
-                            style={{
-                                padding: '10px 20px',
-                                backgroundColor: '#757575',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '5px',
-                                cursor: 'pointer',
-                                fontSize: '14px'
-                            }}
-                        >
-                            ✖️ 에러 메시지 닫기
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* 생성된 랜덤 쌍 표시 */}
-            {generatedPairs && (
-                <div style={{marginTop: '30px', border: '2px solid #4CAF50', padding: '20px', borderRadius: '10px'}}>
-                    <h2 style={{color: '#4CAF50', marginTop: 0, textAlign: 'center'}}>
-                        🎯 생성된 랜덤 쌍 ({generatedPairs.pairs.length}개)
-                    </h2>
-
-                    {/* 쌍 생성 정보 */}
-                    <div style={{
-                        backgroundColor: '#e8f5e8',
-                        padding: '15px',
-                        borderRadius: '5px',
-                        marginBottom: '20px',
-                        fontSize: '14px'
-                    }}>
-                        <div style={{display: 'flex', gap: '20px', flexWrap: 'wrap'}}>
-                            <span><strong>총 참가자:</strong> {generatedPairs.metadata.totalParticipants}명</span>
-                            <span><strong>페어 참여:</strong> {generatedPairs.metadata.usedParticipants}명</span>
-                            {generatedPairs.metadata.excludedParticipants > 0 && (
-                                <span style={{color: '#ff9800'}}>
-                  <strong>제외:</strong> {generatedPairs.metadata.excludedParticipants}명
-                </span>
-                            )}
-                            <span><strong>생성 시간:</strong> {new Date(generatedPairs.metadata.generatedAt).toLocaleString()}</span>
-                        </div>
-
-                        {generatedPairs.metadata.excluded.length > 0 && (
-                            <div style={{marginTop: '10px', color: '#ff9800'}}>
-                                <strong>제외된
-                                    참가자:</strong> {generatedPairs.metadata.excluded.map(p => `${p.name} (${p.type})`).join(', ')}
+                        {statistics && (
+                            <div className="bg-gray-100 rounded-lg p-3 text-sm w-full sm:flex-1">
+                                <div className="font-semibold text-gray-800 mb-1">
+                                    📊 통계: 총 {statistics.totalItems}개 항목, {statistics.totalPairs}개 페어
+                                </div>
+                                {data.metadata?.fetchedAt && (
+                                    <div className="text-gray-600 text-xs">
+                                        마지막 업데이트: {new Date(data.metadata.fetchedAt).toLocaleString()}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
+                </div>
 
-                    {/* 쌍 목록 - 표 형태 */}
-                    <div style={{
-                        overflowX: 'auto',
-                        backgroundColor: '#fff',
-                        borderRadius: '8px',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                    }}>
-                        <table style={{width: '100%', borderCollapse: 'collapse', minWidth: '600px'}}>
-                            <thead>
-                            <tr style={{backgroundColor: '#4CAF50', color: 'white'}}>
-                                <th style={{
-                                    padding: '15px 20px',
-                                    textAlign: 'left',
-                                    borderBottom: '2px solid #45a049',
-                                    fontSize: '16px',
-                                    fontWeight: 'bold'
-                                }}>
-                                    #
-                                </th>
-                                <th style={{
-                                    padding: '15px 20px',
-                                    textAlign: 'left',
-                                    borderBottom: '2px solid #45a049',
-                                    fontSize: '16px',
-                                    fontWeight: 'bold'
-                                }}>
-                                    🎁 GIVER (주는 사람)
-                                </th>
-                                <th style={{
-                                    padding: '15px 20px',
-                                    textAlign: 'center',
-                                    borderBottom: '2px solid #45a049',
-                                    fontSize: '16px',
-                                    fontWeight: 'bold'
-                                }}>
-
-                                </th>
-                                <th style={{
-                                    padding: '15px 20px',
-                                    textAlign: 'left',
-                                    borderBottom: '2px solid #45a049',
-                                    fontSize: '16px',
-                                    fontWeight: 'bold'
-                                }}>
-                                    🎯 RECEIVER (받는 사람)
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {generatedPairs.pairs.map((pair, index) => (
-                                <tr
-                                    key={pair.id}
-                                    style={{
-                                        backgroundColor: index % 2 === 0 ? '#f8f9fa' : '#ffffff',
-                                        borderBottom: '1px solid #e9ecef',
-                                        transition: 'background-color 0.2s ease'
-                                    }}
-                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e8f5e8'}
-                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = index % 2 === 0 ? '#f8f9fa' : '#ffffff'}
-                                >
-                                    <td style={{
-                                        padding: '15px 20px',
-                                        fontWeight: 'bold',
-                                        fontSize: '16px',
-                                        color: '#666',
-                                        borderRight: '1px solid #e9ecef'
-                                    }}>
-                                        {pair.id}
-                                    </td>
-                                    <td style={{
-                                        padding: '15px 20px',
-                                        borderRight: '1px solid #e9ecef'
-                                    }}>
-                                        <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
-                                            <div style={{
-                                                backgroundColor: '#2196F3',
-                                                color: 'white',
-                                                padding: '4px 8px',
-                                                borderRadius: '12px',
-                                                fontSize: '11px',
-                                                fontWeight: 'bold',
-                                                textTransform: 'uppercase',
-                                                minWidth: '60px',
-                                                textAlign: 'center'
-                                            }}>
-                                                {pair.giverType}
+                {/* Participant Data Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
+                    {/* Normals 섹션 */}
+                    <div className="bg-white rounded-lg shadow-md border border-gray-200">
+                        <div className="p-4 sm:p-6">
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="text-2xl">👨‍💼</span>
+                                <div>
+                                    <h3 className="text-lg font-semibold text-blue-600">Normals</h3>
+                                    <p className="text-sm text-gray-500">(A4:A)</p>
+                                </div>
+                            </div>
+                            <p className="text-sm text-gray-700 mb-4">총 {data.normals.length}개 항목</p>
+                            <div className="max-h-48 overflow-y-auto bg-gray-50 rounded-lg p-3">
+                                {data.normals.length > 0 ? (
+                                    <div className="space-y-2">
+                                        {data.normals.map((item, index) => (
+                                            <div key={index} className="bg-white rounded px-3 py-2 text-sm border border-gray-200">
+                                                {item}
                                             </div>
-                                            <div>
-                                                <div style={{fontWeight: 'bold', fontSize: '15px', color: '#333'}}>
-                                                    {pair.giver}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td style={{
-                                        padding: '15px 10px',
-                                        textAlign: 'center',
-                                        borderRight: '1px solid #e9ecef'
-                                    }}>
-                                        <div style={{
-                                            fontSize: '20px',
-                                            color: '#4CAF50',
-                                            fontWeight: 'bold'
-                                        }}>
-                                            ➡️
-                                        </div>
-                                    </td>
-                                    <td style={{padding: '15px 20px'}}>
-                                        <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
-                                            <div style={{
-                                                backgroundColor: '#FF9800',
-                                                color: 'white',
-                                                padding: '4px 8px',
-                                                borderRadius: '12px',
-                                                fontSize: '11px',
-                                                fontWeight: 'bold',
-                                                textTransform: 'uppercase',
-                                                minWidth: '60px',
-                                                textAlign: 'center'
-                                            }}>
-                                                {pair.receiverType}
-                                            </div>
-                                            <div>
-                                                <div style={{fontWeight: 'bold', fontSize: '15px', color: '#333'}}>
-                                                    {pair.receiver}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-500 italic text-sm text-center py-4">데이터가 없습니다.</p>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
-                    {/* 버튼들 */}
-                    <div style={{textAlign: 'center', marginTop: '20px', display: 'flex', gap: '15px', justifyContent: 'center'}}>
-                        <button
-                            onClick={generateRandomPairs}
-                            disabled={pairingInProgress || savingPairs}
-                            style={{
-                                padding: '10px 20px',
-                                backgroundColor: '#ff9800',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '5px',
-                                cursor: (pairingInProgress || savingPairs) ? 'not-allowed' : 'pointer',
-                                opacity: (pairingInProgress || savingPairs) ? 0.6 : 1
-                            }}
-                        >
-                            🔄 새로운 쌍 다시 생성
-                        </button>
+                    {/* Newbies 섹션 */}
+                    <div className="bg-white rounded-lg shadow-md border border-gray-200">
+                        <div className="p-4 sm:p-6">
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="text-2xl">🌱</span>
+                                <div>
+                                    <h3 className="text-lg font-semibold text-green-600">Newbies</h3>
+                                    <p className="text-sm text-gray-500">(B4:B)</p>
+                                </div>
+                            </div>
+                            <p className="text-sm text-gray-700 mb-4">총 {data.newbies.length}개 항목</p>
+                            <div className="max-h-48 overflow-y-auto bg-gray-50 rounded-lg p-3">
+                                {data.newbies.length > 0 ? (
+                                    <div className="space-y-2">
+                                        {data.newbies.map((item, index) => (
+                                            <div key={index} className="bg-white rounded px-3 py-2 text-sm border border-gray-200">
+                                                {item}
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-500 italic text-sm text-center py-4">데이터가 없습니다.</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
 
-                        <button
-                            onClick={savePairsToSheet}
-                            disabled={pairingInProgress || savingPairs}
-                            style={{
-                                padding: '10px 20px',
-                                backgroundColor: '#2196F3',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '5px',
-                                cursor: (pairingInProgress || savingPairs) ? 'not-allowed' : 'pointer',
-                                opacity: (pairingInProgress || savingPairs) ? 0.6 : 1
-                            }}
-                        >
-                            {savingPairs ? '💾 저장 중...' : '💾 이대로 저장하기'}
-                        </button>
+                    {/* Leaders 섹션 */}
+                    <div className="bg-white rounded-lg shadow-md border border-gray-200">
+                        <div className="p-4 sm:p-6">
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="text-2xl">👑</span>
+                                <div>
+                                    <h3 className="text-lg font-semibold text-orange-600">Leaders</h3>
+                                    <p className="text-sm text-gray-500">(C4:C)</p>
+                                </div>
+                            </div>
+                            <p className="text-sm text-gray-700 mb-4">총 {data.leaders.length}개 항목</p>
+                            <div className="max-h-48 overflow-y-auto bg-gray-50 rounded-lg p-3">
+                                {data.leaders.length > 0 ? (
+                                    <div className="space-y-2">
+                                        {data.leaders.map((item, index) => (
+                                            <div key={index} className="bg-white rounded px-3 py-2 text-sm border border-gray-200">
+                                                {item}
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-500 italic text-sm text-center py-4">데이터가 없습니다.</p>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
-            )}
 
+                {/* Filter Pairs 섹션 */}
+                <div className="bg-white rounded-lg shadow-md border border-gray-200 mb-6">
+                    <div className="p-4 sm:p-6">
+                        <div className="flex items-center gap-2 mb-4">
+                            <span className="text-2xl">🚫</span>
+                            <div>
+                                <h3 className="text-lg font-semibold text-purple-600">Filter Pairs</h3>
+                                <p className="text-sm text-gray-500">(G4:H40) - 금지된 쌍</p>
+                            </div>
+                        </div>
+                        <p className="text-sm text-gray-700 mb-4">총 {data.filterPairs.length}개 페어</p>
+
+                        <div className="max-h-80 overflow-auto bg-gray-50 rounded-lg">
+                            {data.filterPairs.length > 0 ? (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full min-w-full">
+                                        <thead className="bg-purple-100 sticky top-0">
+                                            <tr>
+                                                <th className="px-4 py-3 text-left text-sm font-semibold text-purple-700">
+                                                    Column G
+                                                </th>
+                                                <th className="px-4 py-3 text-left text-sm font-semibold text-purple-700">
+                                                    Column H
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-200">
+                                            {data.filterPairs.map((pair, index) => (
+                                                <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                                    <td className="px-4 py-3 text-sm text-gray-900 border-r border-gray-200">
+                                                        {pair[0]}
+                                                    </td>
+                                                    <td className="px-4 py-3 text-sm text-gray-900">
+                                                        {pair[1]}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ) : (
+                                <div className="text-center py-12">
+                                    <p className="text-gray-500 italic text-sm">금지된 쌍이 없습니다.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+
+                {/* 원시 데이터 표시 (디버깅용) */}
+                <details className="bg-white rounded-lg shadow-md border border-gray-200 mb-6">
+                    <summary className="p-4 cursor-pointer font-semibold text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                        🔍 원시 배치 데이터 보기 (개발자용)
+                    </summary>
+                    <div className="p-4 border-t border-gray-200">
+                        <pre className="bg-gray-100 p-4 rounded-lg overflow-auto text-xs text-gray-800 max-h-96">
+                            {JSON.stringify(data, null, 2)}
+                        </pre>
+                    </div>
+                </details>
+
+                {/* 랜덤 쌍 생성 버튼 */}
+                <div className="text-center mb-6">
+                    <button
+                        onClick={generateRandomPairs}
+                        disabled={loading || pairingInProgress || (!data.normals.length && !data.newbies.length && !data.leaders.length)}
+                        className={`
+                            inline-flex items-center justify-center gap-3 px-8 py-4 text-lg font-semibold rounded-xl
+                            transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 w-full sm:w-auto
+                            ${loading || pairingInProgress || (!data.normals.length && !data.newbies.length && !data.leaders.length)
+                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                : 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white'
+                            }
+                        `}
+                    >
+                        <span className="text-2xl">{pairingInProgress ? '⏳' : '🎲'}</span>
+                        {pairingInProgress ? '쌍 생성 중...' : '랜덤 쌍 생성'}
+                    </button>
+                </div>
+
+                {/* 쌍 생성 에러 표시 */}
+                {pairingError && (
+                    <div className="bg-red-50 border-2 border-red-200 rounded-xl p-6 mb-6">
+                        <div className="text-center mb-4">
+                            <h3 className="text-xl font-bold text-red-600 flex items-center justify-center gap-2">
+                                <span className="text-2xl">⚠️</span>
+                                쌍 생성 실패
+                            </h3>
+                        </div>
+
+                        <div className="bg-red-100 border border-red-300 rounded-lg p-4 mb-6 text-center">
+                            <p className="font-semibold text-red-800 mb-2">에러 메시지:</p>
+                            <p className="text-red-700 text-sm leading-relaxed break-words">
+                                {pairingError}
+                            </p>
+                        </div>
+
+                        {/* 에러별 해결 방법 제시 */}
+                        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
+                            <p className="font-semibold text-orange-800 mb-3 flex items-center gap-2">
+                                <span>💡</span>
+                                해결 방법:
+                            </p>
+                            <ul className="space-y-2 text-sm text-orange-700">
+                                {pairingError.includes('newbie') && (
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-orange-500 mt-1">•</span>
+                                        newbie와 leader의 비율을 조정해보세요
+                                    </li>
+                                )}
+                                {pairingError.includes('leader') && (
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-orange-500 mt-1">•</span>
+                                        leader끼리는 매칭이 불가능합니다. normal 참가자를 추가해보세요
+                                    </li>
+                                )}
+                                {pairingError.includes('참가자 구성') && (
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-orange-500 mt-1">•</span>
+                                        참가자 구성을 변경하거나 filterPairs를 조정해보세요
+                                    </li>
+                                )}
+                                {pairingError.includes('1명뿐') && (
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-orange-500 mt-1">•</span>
+                                        각 그룹에 최소 2명 이상의 참가자가 필요합니다
+                                    </li>
+                                )}
+                                <li className="flex items-start gap-2">
+                                    <span className="text-orange-500 mt-1">•</span>
+                                    데이터를 새로고침한 후 다시 시도해보세요
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-orange-500 mt-1">•</span>
+                                    filterPairs에서 너무 많은 쌍을 제외했는지 확인해보세요
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                            <button
+                                onClick={generateRandomPairs}
+                                disabled={pairingInProgress}
+                                className={`
+                                    flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium text-sm
+                                    transition-all duration-200 ${pairingInProgress
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                        : 'bg-green-600 hover:bg-green-700 text-white shadow-md hover:shadow-lg'
+                                    }
+                                `}
+                            >
+                                <span>🔄</span>
+                                다시 생성하기
+                            </button>
+
+                            <button
+                                onClick={refreshData}
+                                disabled={loading || pairingInProgress}
+                                className={`
+                                    flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium text-sm
+                                    transition-all duration-200 ${loading || pairingInProgress
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                        : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg'
+                                    }
+                                `}
+                            >
+                                <span>📊</span>
+                                데이터 새로고침
+                            </button>
+
+                            <button
+                                onClick={() => setPairingError(null)}
+                                className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium text-sm
+                                        bg-gray-500 hover:bg-gray-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
+                            >
+                                <span>✖️</span>
+                                에러 메시지 닫기
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* 생성된 랜덤 쌍 표시 */}
+                {generatedPairs && (
+                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6 shadow-lg">
+                        <div className="text-center mb-6">
+                            <h2 className="text-2xl font-bold text-green-700 flex items-center justify-center gap-3">
+                                <span className="text-3xl">🎯</span>
+                                생성된 랜덤 쌍
+                                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-lg font-bold">
+                                    {generatedPairs.pairs.length}개
+                                </span>
+                            </h2>
+                        </div>
+
+                        {/* 쌍 생성 정보 */}
+                        <div className="bg-green-100 rounded-xl p-4 mb-6 border border-green-200">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                                <div className="text-center">
+                                    <div className="font-semibold text-green-800">총 참가자</div>
+                                    <div className="text-lg font-bold text-green-900">{generatedPairs.metadata.totalParticipants}명</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="font-semibold text-green-800">페어 참여</div>
+                                    <div className="text-lg font-bold text-green-900">{generatedPairs.metadata.usedParticipants}명</div>
+                                </div>
+                                {generatedPairs.metadata.excludedParticipants > 0 && (
+                                    <div className="text-center">
+                                        <div className="font-semibold text-orange-600">제외</div>
+                                        <div className="text-lg font-bold text-orange-700">{generatedPairs.metadata.excludedParticipants}명</div>
+                                    </div>
+                                )}
+                                <div className="text-center col-span-2 sm:col-span-1">
+                                    <div className="font-semibold text-green-800">생성 시간</div>
+                                    <div className="text-xs text-green-700">{new Date(generatedPairs.metadata.generatedAt).toLocaleString()}</div>
+                                </div>
+                            </div>
+
+                            {generatedPairs.metadata.excluded.length > 0 && (
+                                <div className="mt-4 p-3 bg-orange-50 rounded-lg border border-orange-200">
+                                    <div className="font-semibold text-orange-800 mb-2">제외된 참가자:</div>
+                                    <div className="text-sm text-orange-700">
+                                        {generatedPairs.metadata.excluded.map(p => `${p.name} (${p.type})`).join(', ')}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 쌍 목록 - 모바일 친화적 디자인 */}
+                        <div className="space-y-4 sm:space-y-0">
+                            {/* 데스크톱 테이블 뷰 */}
+                            <div className="hidden sm:block overflow-x-auto bg-white rounded-xl shadow-md">
+                                <table className="w-full min-w-full">
+                                    <thead className="bg-green-600 text-white">
+                                        <tr>
+                                            <th className="px-6 py-4 text-left text-sm font-bold">#</th>
+                                            <th className="px-6 py-4 text-left text-sm font-bold">🎁 GIVER (주는 사람)</th>
+                                            <th className="px-6 py-4 text-center text-sm font-bold"></th>
+                                            <th className="px-6 py-4 text-left text-sm font-bold">🎯 RECEIVER (받는 사람)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-200">
+                                        {generatedPairs.pairs.map((pair, index) => (
+                                            <tr
+                                                key={pair.id}
+                                                className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} hover:bg-green-50 transition-colors duration-200`}
+                                            >
+                                                <td className="px-6 py-4 font-bold text-gray-600 text-lg">
+                                                    {pair.id}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase text-white ${
+                                                            pair.giverType === 'normal' ? 'bg-blue-500' :
+                                                            pair.giverType === 'newbie' ? 'bg-green-500' : 'bg-orange-500'
+                                                        }`}>
+                                                            {pair.giverType}
+                                                        </span>
+                                                        <span className="font-semibold text-gray-900">{pair.giver}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-center">
+                                                    <span className="text-2xl text-green-600">➡️</span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase text-white ${
+                                                            pair.receiverType === 'normal' ? 'bg-blue-500' :
+                                                            pair.receiverType === 'newbie' ? 'bg-green-500' : 'bg-orange-500'
+                                                        }`}>
+                                                            {pair.receiverType}
+                                                        </span>
+                                                        <span className="font-semibold text-gray-900">{pair.receiver}</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* 모바일 카드 뷰 */}
+                            <div className="sm:hidden space-y-4">
+                                {generatedPairs.pairs.map((pair, index) => (
+                                    <div key={pair.id} className="bg-white rounded-xl shadow-md p-4 border border-gray-200">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full font-bold text-sm">
+                                                #{pair.id}
+                                            </span>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            {/* Giver */}
+                                            <div className="bg-blue-50 rounded-lg p-3">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <span className="text-lg">🎁</span>
+                                                    <span className="font-semibold text-blue-700">GIVER</span>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <span className={`px-2 py-1 rounded-full text-xs font-bold uppercase text-white ${
+                                                        pair.giverType === 'normal' ? 'bg-blue-500' :
+                                                        pair.giverType === 'newbie' ? 'bg-green-500' : 'bg-orange-500'
+                                                    }`}>
+                                                        {pair.giverType}
+                                                    </span>
+                                                    <span className="font-semibold text-gray-900 text-lg">{pair.giver}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Arrow */}
+                                            <div className="text-center">
+                                                <span className="text-3xl text-green-600">⬇️</span>
+                                            </div>
+
+                                            {/* Receiver */}
+                                            <div className="bg-orange-50 rounded-lg p-3">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <span className="text-lg">🎯</span>
+                                                    <span className="font-semibold text-orange-700">RECEIVER</span>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <span className={`px-2 py-1 rounded-full text-xs font-bold uppercase text-white ${
+                                                        pair.receiverType === 'normal' ? 'bg-blue-500' :
+                                                        pair.receiverType === 'newbie' ? 'bg-green-500' : 'bg-orange-500'
+                                                    }`}>
+                                                        {pair.receiverType}
+                                                    </span>
+                                                    <span className="font-semibold text-gray-900 text-lg">{pair.receiver}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 버튼들 */}
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                            <button
+                                onClick={generateRandomPairs}
+                                disabled={pairingInProgress || savingPairs}
+                                className={`
+                                    flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold
+                                    transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto
+                                    ${(pairingInProgress || savingPairs)
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                        : 'bg-orange-500 hover:bg-orange-600 text-white transform hover:scale-105'
+                                    }
+                                `}
+                            >
+                                <span className="text-xl">🔄</span>
+                                새로운 쌍 다시 생성
+                            </button>
+
+                            <button
+                                onClick={savePairsToSheet}
+                                disabled={pairingInProgress || savingPairs}
+                                className={`
+                                    flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold
+                                    transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto
+                                    ${(pairingInProgress || savingPairs)
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                        : 'bg-blue-600 hover:bg-blue-700 text-white transform hover:scale-105'
+                                    }
+                                `}
+                            >
+                                <span className="text-xl">{savingPairs ? '⏳' : '💾'}</span>
+                                {savingPairs ? '저장 중...' : '이대로 저장하기'}
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
