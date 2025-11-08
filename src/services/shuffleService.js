@@ -1,3 +1,38 @@
+function makeNewbieParticipants(newbies, leaders) {
+    if (newbies.length === 0) {
+        return [];
+    }
+
+    const newbieAndLeaders = [
+        ...newbies.map(name => ({name, type: 'newbie'})),
+        // ...leaders.map(name => ({name, type: 'leader'}))
+    ];
+
+    // 1. leader가 newbie 수보다 적은 경우: 모든 leader 포함
+    if (leaders.length <= newbies.length) {
+        newbieAndLeaders.push(...leaders.map(name => ({name, type: 'leader'})));
+        return {
+            "newbieAndLeaders": newbieAndLeaders,
+            "remainLeaders": []
+        };
+    }
+    // 2. leader가 newbie 수보다 많은 경우: 일부 leader만 포함. 랜덤추출
+    const shuffledLeaders = [...leaders];
+    for (let i = shuffledLeaders.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledLeaders[i], shuffledLeaders[j]] = [shuffledLeaders[j], shuffledLeaders[i]];
+    }
+
+    const selectedLeaders = shuffledLeaders.slice(0, newbies.length);
+    newbieAndLeaders.push(...selectedLeaders.map(name => ({name, type: 'leader'})));
+    const remainLeaders = shuffledLeaders.slice(newbies.length);
+
+    return {
+        "newbieAndLeaders": newbieAndLeaders,
+        "remainLeaders": remainLeaders
+    };
+}
+
 function makePairs(normals, newbies, leaders, filterPairs = []) {
     console.log('🎯 2단계 규칙 기반 쌍 생성 시작');
     console.log(`📊 참가자: normal ${normals.length}명, newbie ${newbies.length}명, leader ${leaders.length}명`);
@@ -23,12 +58,13 @@ function makePairs(normals, newbies, leaders, filterPairs = []) {
         }
     });
 
-    const newbieAndLeaders = [
-        ...newbies.map(name => ({name, type: 'newbie'})),
-        ...leaders.map(name => ({name, type: 'leader'}))
-    ];
+    const newbieParticipantsData = makeNewbieParticipants(newbies, leaders);
+    const newbieAndLeaders = newbieParticipantsData.newbieAndLeaders;
 
-    const normalParticipants = normals.map(name => ({name, type: 'normal'}));
+    const normalParticipants = [
+        ...normals.map(name => ({name, type: 'normal'})),
+        ...newbieParticipantsData.remainLeaders.map(name => ({name, type: 'leader'}))
+    ];
 
     const pairs = [];
 
@@ -136,8 +172,8 @@ function isValidPair(giver, receiver, forbiddenPairs) {
     if (giver.type === 'newbie' && receiver.type === 'normal') return false;
     if (receiver.type === 'newbie' && giver.type === 'normal') return false;
 
-    // 규칙 2: leader끼리는 불가
-    // if (giver.type === 'leader' && receiver.type === 'leader') return false;
+    // 규칙 2: newbie끼리는 불가
+    if (giver.type === 'newbie' && receiver.type === 'newbie') return false;
 
     // 규칙 3: normal은 누구와도 가능 (위 조건들을 통과했으면)
     return true;
