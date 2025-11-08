@@ -1,38 +1,3 @@
-function makeNewbieParticipants(newbies, leaders) {
-    if (newbies.length === 0) {
-        return [];
-    }
-
-    const newbieAndLeaders = [
-        ...newbies.map(name => ({name, type: 'newbie'})),
-        // ...leaders.map(name => ({name, type: 'leader'}))
-    ];
-
-    // 1. leader가 newbie 수보다 적은 경우: 모든 leader 포함
-    if (leaders.length <= newbies.length) {
-        newbieAndLeaders.push(...leaders.map(name => ({name, type: 'leader'})));
-        return {
-            "newbieAndLeaders": newbieAndLeaders,
-            "remainLeaders": []
-        };
-    }
-    // 2. leader가 newbie 수보다 많은 경우: 일부 leader만 포함. 랜덤추출
-    const shuffledLeaders = [...leaders];
-    for (let i = shuffledLeaders.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffledLeaders[i], shuffledLeaders[j]] = [shuffledLeaders[j], shuffledLeaders[i]];
-    }
-
-    const selectedLeaders = shuffledLeaders.slice(0, newbies.length);
-    newbieAndLeaders.push(...selectedLeaders.map(name => ({name, type: 'leader'})));
-    const remainLeaders = shuffledLeaders.slice(newbies.length);
-
-    return {
-        "newbieAndLeaders": newbieAndLeaders,
-        "remainLeaders": remainLeaders
-    };
-}
-
 function makePairs(normals, newbies, leaders, filterPairs = []) {
     console.log('🎯 2단계 규칙 기반 쌍 생성 시작');
     console.log(`📊 참가자: normal ${normals.length}명, newbie ${newbies.length}명, leader ${leaders.length}명`);
@@ -89,6 +54,8 @@ function makePairs(normals, newbies, leaders, filterPairs = []) {
         ...pair,
         id: index + 1
     }));
+
+    validResult(finalPairs);
 
     return {
         pairs: finalPairs,
@@ -160,6 +127,42 @@ function shuffleAndPair(participants, forbiddenPairs) {
     throw new Error(`그룹 내 유효한 쌍을 생성할 수 없습니다 (${participants.length}명). 참가자 구성을 확인해주세요.`);
 }
 
+function makeNewbieParticipants(newbies, leaders) {
+    if (newbies.length === 0) {
+        return [];
+    }
+
+    const newbieAndLeaders = [
+        ...newbies.map(name => ({name, type: 'newbie'})),
+        // ...leaders.map(name => ({name, type: 'leader'}))
+    ];
+
+    // 1. leader가 newbie 수보다 적은 경우: 모든 leader 포함
+    if (leaders.length <= newbies.length) {
+        newbieAndLeaders.push(...leaders.map(name => ({name, type: 'leader'})));
+        return {
+            "newbieAndLeaders": newbieAndLeaders,
+            "remainLeaders": []
+        };
+    }
+    // 2. leader가 newbie 수보다 많은 경우: 일부 leader만 포함. 랜덤추출
+    const shuffledLeaders = [...leaders];
+    for (let i = shuffledLeaders.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledLeaders[i], shuffledLeaders[j]] = [shuffledLeaders[j], shuffledLeaders[i]];
+    }
+
+    const selectedLeaders = shuffledLeaders.slice(0, newbies.length);
+    newbieAndLeaders.push(...selectedLeaders.map(name => ({name, type: 'leader'})));
+    const remainLeaders = shuffledLeaders.slice(newbies.length);
+
+    return {
+        "newbieAndLeaders": newbieAndLeaders,
+        "remainLeaders": remainLeaders
+    };
+}
+
+
 // 유효한 쌍인지 검증하는 함수
 function isValidPair(giver, receiver, forbiddenPairs) {
     // 본인끼리는 불가
@@ -177,6 +180,18 @@ function isValidPair(giver, receiver, forbiddenPairs) {
 
     // 규칙 3: normal은 누구와도 가능 (위 조건들을 통과했으면)
     return true;
+}
+
+function validResult(finalPairs) {
+    // 서로 쌍이면 안됨 (A->B, B->A)
+    const pairSet = new Set();
+    for (const pair of finalPairs) {
+        const forwardKey = `${pair.giver}-${pair.receiver}`;
+        const reverseKey = `${pair.receiver}-${pair.giver}`;
+        if (pairSet.has(reverseKey)) {
+            throw new Error(`유효성 검사 실패: 서로 쌍이 되는 경우가 있습니다 (${pair.giver} <-> ${pair.receiver})`);
+        }
+    }
 }
 
 export {
