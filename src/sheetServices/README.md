@@ -1,5 +1,7 @@
 # Google Sheets Service Package
 
+`ver 1.0.0`
+
 Google Sheets API와 연동하여 스프레드시트 데이터를 조회, 수정하는 범용적인 서비스 패키지입니다. 브라우저 환경에서 JWT 기반 서비스 계정 인증을 지원하며, 동시성 제어를 위한 CAS(Compare-And-Swap) 패턴을 제공합니다.
 
 ## 특징
